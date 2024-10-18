@@ -1,59 +1,25 @@
 const express = require("express");
+const { adminAuth, userAuth } = require("./middlewares/auth");
 
 const app = express();
 
-// app.use(
-//   "/user",
-//   (req, res) => {
-//     console.log("Handling the requst for user");
-// res.send("Response !!");
-//   },
-//   (req, res) => {
-//     console.log("Handling the requst for user 2!!");
-//     res.send("2nd Response!!");
-//   }
-// );
+app.use("/admin", adminAuth);
 
-//without next
+app.get("/user/login", (req, res) => {
+  res.send("user loggid in suceesfully");
+});
 
-// app.use(
-//   "/user",
-//   (req, res) => {
-//     console.log("Handling the requst for user");
-//     // res.send("Response !!");
-//   },
-//   (req, res) => {
-//     console.log("Handling the requst for user 2!!");
-//     res.send("2nd Response!!");
-//   }
-// );
+app.get("/user", userAuth, (req, res) => {
+  res.send("user response");
+});
 
-//With next
+app.get("/admin/getAllDetails", (req, res) => {
+  res.send("user Details");
+});
 
-// app.use(
-//   "/user",
-//   (req, res, next) => {
-//     console.log("Handling the response for the user");
-//     next();
-//   },
-//   (req, res) => {
-//     console.log("Handling the response for the user2 ");
-//     res.send("2nd response");
-//   }
-// );
-
-app.use(
-  "/user",
-  (req, res, next) => {
-    console.log("Handling the response for the user");
-    next();
-    res.send("res 1");
-  },
-  (req, res) => {
-    console.log("Handling the response for the user2 ");
-    res.send("2nd response");
-  }
-);
+app.get("/admin.deleteUser", (req, res) => {
+  res.send("Deleted a user");
+});
 
 app.listen(7777, () => {
   console.log("Server is successfully running on port 7777...");
