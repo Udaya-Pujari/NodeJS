@@ -2,29 +2,58 @@ const express = require("express");
 
 const app = express();
 
-app.get("/user", (req, res) => {
-  res.send({ firstname: "Udaya", lastname: "Pujari" });
-});
+// app.use(
+//   "/user",
+//   (req, res) => {
+//     console.log("Handling the requst for user");
+// res.send("Response !!");
+//   },
+//   (req, res) => {
+//     console.log("Handling the requst for user 2!!");
+//     res.send("2nd Response!!");
+//   }
+// );
 
-app.post("/user", (req, res) => {
-  res.send("sending the post method from user");
-});
+//without next
 
-app.delete("/user", (req, res) => {
-  res.send("delete method from the user");
-});
+// app.use(
+//   "/user",
+//   (req, res) => {
+//     console.log("Handling the requst for user");
+//     // res.send("Response !!");
+//   },
+//   (req, res) => {
+//     console.log("Handling the requst for user 2!!");
+//     res.send("2nd Response!!");
+//   }
+// );
 
-app.put("/user", (req, res) => {
-  res.send("put method from the user");
-});
+//With next
 
-app.patch("/user",(req,res)=>{
-  res.send("patch method from the user")
-})
+// app.use(
+//   "/user",
+//   (req, res, next) => {
+//     console.log("Handling the response for the user");
+//     next();
+//   },
+//   (req, res) => {
+//     console.log("Handling the response for the user2 ");
+//     res.send("2nd response");
+//   }
+// );
 
-app.use("/test", (req, res) => {
-  res.send("hello from test");
-});
+app.use(
+  "/user",
+  (req, res, next) => {
+    console.log("Handling the response for the user");
+    next();
+    res.send("res 1");
+  },
+  (req, res) => {
+    console.log("Handling the response for the user2 ");
+    res.send("2nd response");
+  }
+);
 
 app.listen(7777, () => {
   console.log("Server is successfully running on port 7777...");
