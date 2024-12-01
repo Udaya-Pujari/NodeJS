@@ -13,7 +13,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("Added the user Successfully");
   } catch (err) {
-    res.status(400).send("Error Saving the user:", err.message);
+    res.status(400).send("Error Saving the user:" + err.message);
   }
 });
 
@@ -57,16 +57,31 @@ app.delete("/user", async (req, res) => {
 });
 
 //update the user data: By using PATCH API
-
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/user/:userId", async (req, res) => {
+  // const userId = req.body.userId;
+  const userId = req.params?.userId;
   const data = req.body;
   try {
-    const user = await User.findByIdAndUpdate({ _id: userId }, data);
+    //----------- API level validaton. -----------------
+    const ALLOWED_UPDATES = ["photourl", "about", "gender", "age", "skills"];
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Updates not allowed");
+    }
+    if (data?.skills.length > 10) {
+      throw new Error("Skills can not be more than 10");
+    }
+    // ------------------------------------------------------------
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
     console.log(user);
     res.send("user updated successfully");
   } catch (err) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send("Update patch failed " + err.message);
   }
 });
 
