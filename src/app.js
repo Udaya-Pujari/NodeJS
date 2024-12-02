@@ -1,19 +1,35 @@
 const express = require("express");
 const { connectDB } = require("./config/database");
 const { User } = require("./models/user");
+const { validateSignupData } = require("./utils/validator");
+const bcrypt = require("bcrypt");
 const app = express();
-
 app.use(express.json());
 
 //Creating ths first api POST method
 app.post("/signup", async (req, res) => {
   // console.log(req.body);
-  const user = new User(req.body);
   try {
+    // 1. validation of the data
+    validateSignupData(req); //what evr the request is coming, I will validate it over here
+    const { firstName, lastName, emailId, password } = req.body; //I will get pass the password from my request.body
+    // 2. Encrypt the password
+    const passwordHash = await bcrypt.hash(password, 10);
+    console.log(passwordHash);
+    // 3. save the user
+
+    //creating a new instance of user model
+    // const user = new User(req.body);  //this is bad way to use req.body, so ,insted mention every field explicitly
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
     await user.save();
     res.send("Added the user Successfully");
   } catch (err) {
-    res.status(400).send("Error Saving the user:" + err.message);
+    res.status(400).send("ERROR: " + err.message);
   }
 });
 
