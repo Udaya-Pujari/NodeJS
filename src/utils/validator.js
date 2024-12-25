@@ -1,4 +1,5 @@
 const validator = require("validator");
+
 const validateSignupData = (req) => {
   const { firstName, lastName, emailId, password } = req.body;
 
@@ -11,4 +12,23 @@ const validateSignupData = (req) => {
   }
 };
 
-module.exports = { validateSignupData };
+const validateEditProfileData = (req) => {
+  const allowedEditFields = [
+    "firstName",
+    "lastName",
+    "emailId",
+    "photoUrl",
+    "gender",
+    "age",
+    "about",
+    "skills",
+  ];
+  //I am checking that every filed which is comming from the req.body is presnt in allowedEditfields
+  const isEditAllowed = Object.keys(req.body).every((field) =>
+    allowedEditFields.includes(field)
+  );
+
+  return isEditAllowed;
+};
+
+module.exports = { validateSignupData, validateEditProfileData };
