@@ -40,12 +40,17 @@ const userSchema = new mongoose.Schema(
       min: 18,
     },
     gender: {
-      type: String,
-      validator(value) {
-        if (!["male", "female", "others"] === value) {
-          throw new Error("Gender data is not valid");
-        }
+      type: String, 
+      // you can make use of validator or you can make use of enum as shown below to validate
+      enum: {
+        values: ["male", "female", "others"],
+        message: `{VALUE} is not valid data`,
       },
+      // validator(value) {
+      //   if (!["male", "female", "others"] === value) {
+      //     throw new Error("Gender data is not valid");
+      //   }
+      // },
     },
     photoUrl: {
       type: String,
