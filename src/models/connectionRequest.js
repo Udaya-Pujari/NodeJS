@@ -4,10 +4,12 @@ const connectionRequestSchema = new mongoose.Schema(
   {
     fromUserId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User", //this is reference to the user collection
       required: true,
     },
     toUserId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     status: {
@@ -24,7 +26,7 @@ const connectionRequestSchema = new mongoose.Schema(
 
 connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 });
 
-//when you call the save , this method is caleed each time
+//when you call the save , this method is called each time
 connectionRequestSchema.pre("save", function (next) {
   const connectionRequest = this;
   //checking fromuserId is same as toUserId

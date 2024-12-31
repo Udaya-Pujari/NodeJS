@@ -14,7 +14,7 @@ requestRouter.post(
       const toUserId = req.params.toUserId;
       const status = req.params.status;
 
-      //checking the ststus , so that user should should not pass anything in url othet than ignored and interested
+      //checking the ststus , so that user should not pass anything in url other than ignored and interested
       const allowedStatus = ["ignored", "interested"];
       if (!allowedStatus.includes(status)) {
         return res
@@ -54,6 +54,43 @@ requestRouter.post(
           req.user.firstName + " is " + status + " in " + toUser.firstName,
         data,
       });
+    } catch (err) {
+      res.status(400).send("ERROR : " + err.message);
+    }
+  }
+);
+
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { status, requestId } = req.params;
+
+      //validating the status
+      const allowedStatus = ["accepted", "rejected"];
+      if (!allowedStatus.includes(status)) {
+        return res.status(400).json({ message: "Status not allowed" });
+      }
+
+      // making sure that the following has the correct data in DB of person whom we are sending
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+
+      if (!connectionRequest) {
+        return res
+          .status(400)
+          .json({ message: "Connection request not found" });
+      }
+
+      connectionRequest.status = status;
+
+      const data = await connectionRequest.save();
+      res.json({ message: "Connection request is " + status, data });
     } catch (err) {
       res.status(400).send("ERROR : " + err.message);
     }
